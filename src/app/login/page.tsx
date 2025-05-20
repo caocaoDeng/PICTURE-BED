@@ -2,29 +2,32 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAppDispatch, useAppSelector } from '@/store/hook'
-import { setAuthToken, fetchUserInfo } from '@/store/user'
+import { useAppDispatch } from '@/store/hook'
+import { setAccessToken, fetchUserInfo } from '@/store/user'
+import octokit from '@/utils/Octokit'
 import styles from './page.module.scss'
 
 export default function Login() {
   const router = useRouter()
-  const user = useAppSelector(state => state.user.user)
   const dispatch = useAppDispatch()
 
   const [token, setToken] = useState<string>('')
-  const [isEmpty, setIsEmpty] = useState<boolean>(false)
+  const [valid, setValide] = useState<boolean>(false)
 
   const handleChange = (e: React.BaseSyntheticEvent) => {
     const value = e.target.value
-    setIsEmpty(!value)
+    setValide(!value)
     setToken(value)
   }
 
   const submit = async () => {
-    if (!token) return setIsEmpty(true)
-    await dispatch(fetchUserInfo())
-    if (!user) return
-    dispatch(setAuthToken(btoa(token)))
+    if (!token) return setValide(true)
+    // 初始化octokit实例
+    octokit.initOctokit(token)
+    // 获取用户信息
+    const userInfo = await dispatch(fetchUserInfo())
+    if (!userInfo) return
+    dispatch(setAccessToken(btoa(token)))
     router.replace('/')
   }
 
@@ -37,15 +40,20 @@ export default function Login() {
       <div className="w-72 min-h-max p-3 rounded bg-white">
         <form>
           <label className="form-item">
-            <span className="label">Auth Token</span>
+            <span className="form-item-label">Access Token</span>
             <input
               type="text"
               className="mt-1"
-              required={isEmpty}
+              placeholder="Your personal access token"
+              required={valid}
               defaultValue={token}
               onChange={handleChange}
             />
-            {isEmpty ? <p className="error">请填写 auth token</p> : <></>}
+            {valid ? (
+              <p className="form-item-error-text">请填写 auth token</p>
+            ) : (
+              <></>
+            )}
           </label>
           <button
             type="button"

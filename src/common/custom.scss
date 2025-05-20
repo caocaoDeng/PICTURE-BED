@@ -1,0 +1,24 @@
+@layer base {
+  .form-item {
+    @apply relative block mb-6;
+    .form-item-label {
+      @apply block text-base font-medium;
+    }
+    .form-item-error-text {
+      @apply absolute text-sm text-red-600;
+    }
+  }
+  input {
+    @apply block w-full px-3 py-2 bg-white border border-slate-300 rounded text-sm shadow-sm placeholder-slate-400
+    focus:outline-none focus:border-zinc-950 focus:ring-1 focus:ring-zinc-950
+    disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none
+    required:outline-red-600 required:border-red-600;
+  }
+  button {
+    &:hover {
+      background-color: --alpha(var(--foreground) / 90%);
+    }
+    @apply px-4 py-1.5 text-sm text-white leading-5 rounded-md tracking-widest bg-foreground;
+  }
+
+}

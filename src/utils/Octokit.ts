@@ -1,5 +1,8 @@
+'use client'
 import { Octokit } from 'octokit'
 import { RequestMethod } from '@octokit/types'
+import type { UserState } from '@/store/interface'
+import { USERINFO } from '@/store/const'
 
 class CreateOctokit {
   octokit: Octokit | null = null
@@ -11,9 +14,12 @@ class CreateOctokit {
   }
 
   constructor() {
-    const auth = ''
-    this.initOctokit(auth)
+    let userInfo: UserState | string | null = localStorage.getItem(USERINFO)
+    if (!userInfo) return
+    userInfo = JSON.parse(userInfo) as UserState
+    this.initOctokit('')
   }
+
   initOctokit(auth: string) {
     if (!auth) return
     this.octokit = new Octokit({

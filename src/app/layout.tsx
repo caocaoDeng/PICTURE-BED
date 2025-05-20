@@ -1,5 +1,9 @@
-import type { Metadata } from 'next'
+'use client'
+
+// import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import store from '@/store'
+import { Provider } from 'react-redux'
 import './globals.css'
 
 const geistSans = Geist({
@@ -12,10 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-export const metadata: Metadata = {
-  title: '小草',
-  description: 'picture bed for use github rest api',
-}
+// export const metadata: Metadata = {
+//   title: '小草',
+//   description: 'picture bed for use github rest api',
+// }
 
 export default function RootLayout({
   children,
@@ -26,7 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <Provider store={store}>{children}</Provider>
       </body>
     </html>
   )

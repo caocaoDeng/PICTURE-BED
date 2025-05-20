@@ -1,39 +1,28 @@
-// 用户信息
-export interface User {
-  id: number
-  location: string
-  login: string
-  name: string
-  email: string
-  bio: string
-  avatar_url: string
-  html_url: string
+// 获取 repo 的参数
+export interface QueryRepo {
+  owner: string
+  repo: string
 }
 
-// 获取 repos 的参数
-export interface IRepositoriesParams {
-  username: string
-}
-
-// repos 信息
-export interface Repository {
-  name: string
-}
-
-// 创建 repos 的参数
-export interface CreateReposParams {
+// 创建 repo 的参数
+export interface CreateRepo {
   name: string
   description?: string
   private?: boolean
 }
 
+export interface ContentParams {
+  owner: string
+  repo: string
+  path: string
+}
+
 // 获取 repos 返回的信息
-export interface ReposContent {
+export interface RepoContent {
   name: string
   path: string
   sha: string
-  type: string
-  content: string
+  type: 'file' | 'dir'
   html_url: string
   download_url: string
 }

@@ -1,14 +1,16 @@
 @import "tailwindcss";
+@import "../common/custom.scss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --activeground: #3b82f6;
+  --activeground: #0f5bff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-activeground: var(--activeground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
