@@ -34,7 +34,8 @@ export default function Home() {
 
   return (
     <Layout>
-      <WaterFall data={getImageData()} itemMaxW={200} gap={10}></WaterFall>
+      7777
+      {/* <WaterFall data={getImageData()} itemMaxW={200} gap={10}></WaterFall> */}
     </Layout>
   )
 }

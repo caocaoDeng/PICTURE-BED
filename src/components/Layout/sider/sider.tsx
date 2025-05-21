@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { setRepoPath, fetchRepoContent } from '@/store/repo'
 import { REPONAME } from '@/config'
@@ -7,16 +8,20 @@ import { ActionType } from '@/store/interface'
 
 export default function Sider() {
   const dispatch = useAppDispatch()
-
   const { content } = useAppSelector(state => state.repo)
+
+  const [pathIndex, setPathIndex] = useState<number | null>(null)
 
   const dirList = () => {
     return content.filter(item => item.type === 'dir')
   }
 
-  const handleClick = async (path: string) => {
+  const handleClick = async (path: string, index: number) => {
+    if (pathIndex !== null) return
+    setPathIndex(index)
     await dispatch(setRepoPath({ type: ActionType.JOIN, path }))
     await dispatch(fetchRepoContent())
+    setPathIndex(null)
   }
 
   return (
@@ -33,11 +38,18 @@ export default function Sider() {
         {dirList().map(({ name, path }, index) => (
           <li
             key={index}
-            onClick={() => handleClick(path)}
-            className="flex items-center gap-3 p-2 mb-1 cursor-pointer rounded transition-all hover:bg-activeground hover:text-white">
-            <span className="iconfont icon-24gf-folder">icon</span>
+            onClick={() => handleClick(path, index)}
+            className={`flex items-center gap-3 p-2 mb-1 cursor-pointer rounded transition-all hover:bg-activeground hover:text-white ${
+              pathIndex === index ? 'bg-activeground text-white' : ''
+            }`}>
+            <span className="iconfont icon-24gf-folder"></span>
             <span className="flex-1 truncate">{name}</span>
-            <span>*</span>
+            <div
+              className={`iconfont icon-loading1 ${
+                pathIndex === index
+                  ? 'flex items-center w-4 h-4 animate-spin'
+                  : 'hidden'
+              }`}></div>
           </li>
         ))}
       </ul>

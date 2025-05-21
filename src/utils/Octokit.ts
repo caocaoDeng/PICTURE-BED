@@ -14,9 +14,9 @@ class CreateOctokit {
   }
 
   constructor() {
-    let userInfo: UserState | string | null = localStorage.getItem(USERINFO)
-    if (!userInfo) return
-    userInfo = JSON.parse(userInfo) as UserState
+    // let userInfo: UserState | string | null = localStorage.getItem(USERINFO)
+    // if (!userInfo) return
+    // userInfo = JSON.parse(userInfo) as UserState
     this.initOctokit('')
   }
 

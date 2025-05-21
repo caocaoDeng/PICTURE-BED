@@ -1,3 +1,4 @@
+import React from 'react'
 import Image from 'next/image'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { fetchRepoContent, setRepoPath } from '@/store/repo'
@@ -23,12 +24,10 @@ export default function Header() {
       </h1>
       <ul className="flex-1 flex">
         {path.map((item, index) => (
-          <>
-            <li key={index} onClick={() => handleEntryPath(index)}>
-              {item}
-            </li>
+          <React.Fragment key={index}>
             {!!index ? <li>/</li> : <></>}
-          </>
+            <li onClick={() => handleEntryPath(index)}>{item}</li>
+          </React.Fragment>
         ))}
       </ul>
       <div className="flex flex-nowrap items-center gap-2 pr-2.5">
