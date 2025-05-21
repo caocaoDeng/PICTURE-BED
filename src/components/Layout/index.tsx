@@ -1,6 +1,6 @@
-import Header from './header/header'
-import Sider from './sider/sider'
-import Content from './content/content'
+import Header from './header'
+import Sider from './sider'
+import Content from './main'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
