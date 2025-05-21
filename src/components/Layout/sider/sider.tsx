@@ -3,6 +3,7 @@
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { setRepoPath, fetchRepoContent } from '@/store/repo'
 import { REPONAME } from '@/config'
+import { ActionType } from '@/store/interface'
 
 export default function Sider() {
   const dispatch = useAppDispatch()
@@ -14,7 +15,7 @@ export default function Sider() {
   }
 
   const handleClick = async (path: string) => {
-    await dispatch(setRepoPath(`/${path}`))
+    await dispatch(setRepoPath({ type: ActionType.JOIN, path }))
     await dispatch(fetchRepoContent())
   }
 

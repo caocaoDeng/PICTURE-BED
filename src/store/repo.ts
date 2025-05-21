@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { AppDispatch, RootState } from './index'
-import type { RepoState } from './interface'
 import { REPONAME } from '@/config'
 import { SET_REPO_PATH, SET_REPO_CONTENT } from './const'
+import type { RepoPathAction, RepoState } from './interface'
+import { ActionType } from './interface'
 import { RepoContent } from '@/api/interface'
 import api from '@/api'
 
@@ -17,8 +18,19 @@ export const userSlice = createSlice({
   name: 'repo',
   initialState,
   reducers: {
-    [SET_REPO_PATH]: (state, action: PayloadAction<string>) => {
-      state.path.push(action.payload)
+    [SET_REPO_PATH]: (state, { payload }: PayloadAction<RepoPathAction>) => {
+      const { type, path } = payload
+      switch (type) {
+        case ActionType.JOIN: {
+          state.path.push(path as string)
+          break
+        }
+
+        case ActionType.SLICE: {
+          state.path = [...(path as string[])]
+          break
+        }
+      }
     },
     [SET_REPO_CONTENT]: (state, action: PayloadAction<RepoContent[]>) => {
       state.content = action.payload

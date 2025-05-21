@@ -18,3 +18,13 @@ export interface RepoState {
   path: string[]
   content: RepoContent[]
 }
+
+export enum ActionType {
+  JOIN = 'join',
+  SLICE = 'slice',
+}
+
+export interface RepoPathAction {
+  type: ActionType.JOIN | ActionType.SLICE
+  path: string | string[]
+}

@@ -1,9 +1,20 @@
 import Image from 'next/image'
-import { useAppSelector } from '@/store/hook'
+import { useAppSelector, useAppDispatch } from '@/store/hook'
+import { fetchRepoContent, setRepoPath } from '@/store/repo'
+import { ActionType } from '@/store/interface'
 
 export default function Header() {
+  const dispatch = useAppDispatch()
+
   const { user } = useAppSelector(store => store.user)
   const { path } = useAppSelector(store => store.repo)
+
+  const handleEntryPath = async (index: number) => {
+    if (index === path.length - 1) return
+    const entryPath = path.slice(0, index + 1)
+    await dispatch(setRepoPath({ type: ActionType.SLICE, path: entryPath }))
+    await dispatch(fetchRepoContent())
+  }
 
   return (
     <header className="flex shrink-0 h-16 items-center border-b">
@@ -12,7 +23,12 @@ export default function Header() {
       </h1>
       <ul className="flex-1 flex">
         {path.map((item, index) => (
-          <li key={index}>{item}</li>
+          <>
+            <li key={index} onClick={() => handleEntryPath(index)}>
+              {item}
+            </li>
+            {!!index ? <li>/</li> : <></>}
+          </>
         ))}
       </ul>
       <div className="flex flex-nowrap items-center gap-2 pr-2.5">
