@@ -1,19 +1,7 @@
-'use client'
-
 import { useEffect, useRef, useState } from 'react'
-import ImageLazy from '../ImageLazy'
+import Image from 'next/image'
+import { WaterData } from '@/api/interface'
 import styles from './waterfall.module.scss'
-
-const actionsList = [
-  {
-    action: 'copy',
-    icon: 'icon-fuzhi',
-  },
-  {
-    action: 'download',
-    icon: 'icon-xiazai',
-  },
-]
 
 export interface Action {
   type: string
@@ -30,13 +18,13 @@ export default function WaterFall({
 }: {
   itemMaxW: number
   gap: number
-  data: any[]
-  onClick: (p: any) => void
+  data: WaterData[]
+  onClick?: (p: WaterData) => void
 }) {
   const containerElm = useRef<HTMLDivElement>(null)
   const [itemW, setItemW] = useState<number>(0)
   const [col, setCol] = useState<number[]>([])
-  const [waterfallData, setWaterFallData] = useState<any[]>([])
+  const [waterfallData, setWaterFallData] = useState<WaterData[]>([])
 
   /**
    * 列数，每一项宽度
@@ -53,7 +41,7 @@ export default function WaterFall({
     setCol(col)
   }
 
-  const renderLayout = (data: any[]) => {
+  const renderLayout = (data: WaterData[]) => {
     data.forEach(item => {
       // 获取列高度最小的下标
       const minIndex = col.indexOf(Math.min(...col))
@@ -61,8 +49,7 @@ export default function WaterFall({
       const offsetX = (itemW + gap) * minIndex
       // y偏移量
       const offsetY = col[minIndex]
-      // TODO 获取每一项的高度
-      col[minIndex] += 400 + gap
+      col[minIndex] += item.height + gap
       setWaterFallData([...waterfallData, { ...item, offsetX, offsetY }])
     })
   }
@@ -81,30 +68,17 @@ export default function WaterFall({
       ref={containerElm}
       className="relative w-full"
       style={{ '--itemW': itemW }}>
-      {waterfallData.map(
-        ({ name, width, height, download_url, sha, style }, index) => {
-          return (
-            <div
-              key={sha + index}
-              className={styles['water-fall-item']}
-              style={{ ...style }}>
-              <ImageLazy
-                className="w-full h-full transition-all hover:scale-110"
-                target={containerElm.current?.parentElement}
-                lazy={true}
-                style={{
-                  textColor: 'rgb(var(--foreground))',
-                  bgColor: 'rgb(var(--background))',
-                }}
-                src={download_url}
-                width={width}
-                height={height}
-                alt={name}
-              />
-            </div>
-          )
-        }
-      )}
+      {waterfallData.map(({ name, width, height, download_url, sha }) => {
+        return (
+          <div key={sha} className={styles['water-fall-item']}>
+            <Image
+              src={download_url}
+              width={width}
+              height={height}
+              alt={name}></Image>
+          </div>
+        )
+      })}
     </div>
   )
 }

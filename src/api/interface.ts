@@ -27,6 +27,13 @@ export interface RepoContent {
   download_url: string
 }
 
+export interface WaterData extends RepoContent {
+  width: number
+  height: number
+  offsetX?: number
+  offsetY?: number
+}
+
 export interface Committer {
   name: string
   email: string
