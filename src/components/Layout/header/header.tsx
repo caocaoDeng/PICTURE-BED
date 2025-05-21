@@ -18,15 +18,19 @@ export default function Header() {
   }
 
   return (
-    <header className="flex shrink-0 h-16 items-center border-b">
+    <header className="flex shrink-0 h-16 items-center border-b border-bcolor">
       <h1 className="flex items-center w-64 pl-2.5 text-xl font-semibold shrink-0">
         PICTURE BED
       </h1>
-      <ul className="flex-1 flex">
+      <ul className="flex-1 flex gap-2">
         {path.map((item, index) => (
           <React.Fragment key={index}>
             {!!index ? <li>/</li> : <></>}
-            <li onClick={() => handleEntryPath(index)}>{item}</li>
+            <li
+              className="cursor-pointer font-bold"
+              onClick={() => handleEntryPath(index)}>
+              {item}
+            </li>
           </React.Fragment>
         ))}
       </ul>

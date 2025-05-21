@@ -25,7 +25,7 @@ export default function Sider() {
   }
 
   return (
-    <nav className="flex flex-col w-64 h-full border-r text-sm">
+    <nav className="flex flex-col w-64 h-full border-r border-bcolor text-sm">
       <div className="px-2.5 pt-5 pb-2.5">
         <input
           type="text"
