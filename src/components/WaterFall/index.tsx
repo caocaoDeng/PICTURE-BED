@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { WaterData } from '@/api/interface'
 import styles from './waterfall.module.scss'
@@ -67,7 +67,7 @@ export default function WaterFall({
     <div
       ref={containerElm}
       className="relative w-full"
-      style={{ '--itemW': itemW }}>
+      style={{ '--itemW': itemW } as React.CSSProperties}>
       {waterfallData.map(({ name, width, height, download_url, sha }) => {
         return (
           <div key={sha} className={styles['water-fall-item']}>

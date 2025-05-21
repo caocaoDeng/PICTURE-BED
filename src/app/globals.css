@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../common/iconfont/iconfont.css";
 @import "../common/custom.scss";
 
 :root {
