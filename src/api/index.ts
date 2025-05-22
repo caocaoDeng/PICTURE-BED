@@ -1,14 +1,6 @@
 import octokit from '@/utils/Octokit'
 import { User } from '@/store/interface'
 import { QueryRepo, CreateRepo, ContentParams, RepoContent } from './interface'
-// import {
-//   User,
-//   IRepositoriesParams,
-//   Repository,
-//   CreateReposParams,
-//   ReposContent,
-//   UpdateReposParams,
-// } from './interface'
 
 const api = {
   // 获取用户信息
@@ -44,15 +36,6 @@ const api = {
       url: `/repos/${owner}/${repo}/contents/${path}`,
     })
   },
-
-  // // 获取repos列表
-  // getUserRepositories(params: any) {
-  //   return octokit.request<any, any>({
-  //     method: 'GET',
-  //     url: `/users/${params.username}/repos`,
-  //     params,
-  //   })
-  // },
 
   // // 更新内容
   // updateReposContent(params: UpdateReposParams) {
