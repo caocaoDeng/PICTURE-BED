@@ -1,4 +1,3 @@
-'use client'
 import { Octokit } from 'octokit'
 import { RequestMethod } from '@octokit/types'
 import type { UserState } from '@/store/interface'
@@ -13,15 +12,11 @@ class CreateOctokit {
     },
   }
 
-  constructor() {
+  initOctokit(auth?: string) {
     let userInfo: UserState | string | null = localStorage.getItem(USERINFO)
-    if (!userInfo) return
-    userInfo = JSON.parse(userInfo) as UserState
-    this.initOctokit('')
-  }
-
-  initOctokit(auth: string) {
-    if (!auth) return
+    if (!auth && !userInfo) return
+    userInfo = JSON.parse(userInfo as string) as UserState
+    auth = auth || userInfo.access_token
     this.octokit = new Octokit({
       auth,
       userAgent: 'PICTURE-BED(caocaoDeng)/v1.2.3',
@@ -39,6 +34,7 @@ class CreateOctokit {
   }): Promise<T> {
     return new Promise(async (resolve, reject) => {
       try {
+        !this.octokit && this.initOctokit()
         const res = await (this.octokit as Octokit).request(
           `${method} ${url}`,
           {
