@@ -15,7 +15,7 @@ class CreateOctokit {
     let userInfo: UserState | string | null = localStorage.getItem(USERINFO)
     if (!auth && !userInfo) return
     userInfo = JSON.parse(userInfo as string) as UserState
-    auth = auth || userInfo.access_token
+    auth = auth || atob(userInfo.access_token)
     this.octokit = new Octokit({
       auth,
       userAgent: 'PICTURE-BED(caocaoDeng)/v1.2.3',

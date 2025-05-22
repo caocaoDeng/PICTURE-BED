@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useAppDispatch } from '@/store/hook'
 import { setAccessToken, fetchUserInfo } from '@/store/user'
 import octokit from '@/utils/Octokit'
-import styles from './page.module.scss'
 
 export default function Login() {
   const router = useRouter()
@@ -33,7 +32,11 @@ export default function Login() {
 
   return (
     <div
-      className={`${styles.login} fixed flex items-center justify-center w-screen h-screen`}>
+      className="fixed flex items-center justify-center w-screen h-screen"
+      style={{
+        backgroundImage:
+          'linear-gradient(to left bottom, #21413f, #1c3636, #182c2d, #142223, #10191a, #0d1517, #091113, #050c0e, #060f11, #071115, #081317, #09151a)',
+      }}>
       <div className="fixed top-20 left-0 p-2 pr-4 rounded-r-full leading-none bg-white">
         Image
       </div>
@@ -42,7 +45,7 @@ export default function Login() {
           <label className="form-item">
             <span className="form-item-label">Access Token</span>
             <input
-              type="text"
+              type="password"
               className="mt-1"
               placeholder="Your personal access token"
               required={valid}
@@ -55,10 +58,7 @@ export default function Login() {
               <></>
             )}
           </label>
-          <button
-            type="button"
-            className={`${styles.button} w-full text-white`}
-            onClick={submit}>
+          <button type="button" className="w-full text-white" onClick={submit}>
             连接
           </button>
         </form>
