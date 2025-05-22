@@ -35,12 +35,16 @@ export default function Header() {
         ))}
       </ul>
       <div className="flex flex-nowrap items-center gap-2 pr-2.5">
-        <Image
-          src={user ? user.avatar_url : '/user.png'}
-          width={24}
-          height={24}
-          alt="avatar"
-        />
+        <div className="flex items-center gap-2">
+          <Image
+            className="rounded-full"
+            src={user ? user.avatar_url : '/user.png'}
+            width={24}
+            height={24}
+            alt="avatar"
+          />
+          <span className="text-xs">{user?.name}</span>
+        </div>
       </div>
     </header>
   )

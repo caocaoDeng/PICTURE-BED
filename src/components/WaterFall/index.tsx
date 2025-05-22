@@ -33,9 +33,12 @@ export default function WaterFall({
   const init = () => {
     const divInfo = containerElm.current?.getBoundingClientRect()
     if (!divInfo) return
-    const length: number = divInfo.width / itemMaxW
+    // 列数
+    const length: number = Math.floor(divInfo.width / itemMaxW)
+    // gap 总宽度
+    const gapW = (length - 1) * gap
     // 根据列重新计算每一项的宽度
-    const itemW = divInfo.width - ((length - 1) * gap) / length
+    const itemW = (divInfo.width - gapW) / length
     const colums = Array.from({ length }, () => 0)
     setItemW(itemW)
     setCol(colums)
@@ -49,13 +52,19 @@ export default function WaterFall({
       const offsetX = (itemW + gap) * minIndex
       // y偏移量
       const offsetY = col[minIndex]
-      col[minIndex] += item.height + gap
-      setWaterFallData([...waterfallData, { ...item, offsetX, offsetY }])
+      // 渲染的高度
+      const renderH = (itemW * item.height) / item.width
+      col[minIndex] += renderH + gap
+      setWaterFallData(preData => [
+        ...preData,
+        { ...item, renderH, offsetX, offsetY },
+      ])
     })
   }
 
+  useEffect(init, [])
+
   useEffect(() => {
-    init()
     renderLayout(data)
     // window.addEventListener('resize', updateData)
     // return () => {
@@ -67,18 +76,37 @@ export default function WaterFall({
     <div
       ref={containerElm}
       className="relative w-full"
-      style={{ '--itemW': itemW } as React.CSSProperties}>
-      {waterfallData.map(({ name, width, height, download_url, sha }) => {
-        return (
-          <div key={sha} className={styles['water-fall-item']}>
-            <Image
-              src={download_url}
-              width={width}
-              height={height}
-              alt={name}></Image>
-          </div>
-        )
-      })}
+      style={{ '--itemW': `${itemW}px` } as React.CSSProperties}>
+      {waterfallData.map(
+        ({
+          sha,
+          name,
+          width,
+          height,
+          renderH,
+          offsetX,
+          offsetY,
+          download_url,
+        }) => {
+          return (
+            <div
+              key={sha}
+              className="absolute top-0 left-0"
+              style={{
+                width: 'var(--itemW)',
+                height: `${renderH}px`,
+                transform: `translate(${offsetX}px, ${offsetY}px)`,
+              }}>
+              <Image
+                style={{ width: '100%' }}
+                src={download_url}
+                width={width}
+                height={height}
+                alt={name}></Image>
+            </div>
+          )
+        }
+      )}
     </div>
   )
 }

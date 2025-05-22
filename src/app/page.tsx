@@ -15,10 +15,8 @@ export default function Home() {
     return repo.content
       .filter(item => item.type === 'file')
       .map(item => {
-        const [sizeStr, fileName] = item.name.split('_')
-        const [width, height] = sizeStr
-          .split('&')
-          .map(item => +item.split('=')[1])
+        const [sizeStr, fileName] = item.name.split('^')
+        const [width, height] = sizeStr.split('X').map(item => +item)
         return {
           ...item,
           name: fileName,
@@ -34,8 +32,7 @@ export default function Home() {
 
   return (
     <Layout>
-      7777
-      {/* <WaterFall data={getImageData()} itemMaxW={200} gap={10}></WaterFall> */}
+      <WaterFall data={getImageData()} itemMaxW={200} gap={10}></WaterFall>
     </Layout>
   )
 }
