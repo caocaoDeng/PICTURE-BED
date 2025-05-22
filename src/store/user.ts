@@ -19,7 +19,7 @@ export const userSlice = createSlice({
       // 将用户信息保存到本地
       const userInfo = JSON.stringify({
         ...state,
-        access_token: btoa(action.payload),
+        access_token: action.payload,
       })
       localStorage.setItem(USERINFO, userInfo)
     },

@@ -36,12 +36,12 @@ export default function RootLayout({
   const permissionAuth = async () => {
     const userInfo = localStorage.getItem(USERINFO)
     // 本地不存在用户信息重定向登录页面
-    if (!userInfo) router.push('/login')
+    if (!userInfo) return router.push('/login')
     const storeUser = store.getState().user.user
     if (storeUser) return
     // 仓库不存在用户信息 重新设置
     const { access_token, user } = JSON.parse(userInfo as string) as UserState
-    await store.dispatch(setAccessToken(atob(access_token)))
+    await store.dispatch(setAccessToken(access_token))
     await store.dispatch(setUserInfo(user as User))
   }
 
