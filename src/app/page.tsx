@@ -9,10 +9,10 @@ import WaterFall from '@/components/WaterFall'
 export default function Home() {
   const dispatch = useAppDispatch()
 
-  const repoContent = useAppSelector(state => state.repo.content)
+  const { user, repo } = useAppSelector(state => state)
 
   const getImageData = () => {
-    return repoContent
+    return repo.content
       .filter(item => item.type === 'file')
       .map(item => {
         const [sizeStr, fileName] = item.name.split('_')
@@ -29,8 +29,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    dispatch(fetchRepoContent())
-  }, [])
+    user.user && dispatch(fetchRepoContent())
+  }, [user])
 
   return (
     <Layout>
