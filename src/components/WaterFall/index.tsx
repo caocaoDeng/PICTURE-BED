@@ -33,12 +33,12 @@ export default function WaterFall({
   const init = () => {
     const divInfo = containerElm.current?.getBoundingClientRect()
     if (!divInfo) return
-    let col: number | number[] = divInfo.width / itemMaxW
+    const length: number = divInfo.width / itemMaxW
     // 根据列重新计算每一项的宽度
-    const itemW = divInfo.width - ((col - 1) * gap) / col
-    col = new Array(col).fill(0)
+    const itemW = divInfo.width - ((length - 1) * gap) / length
+    const colums = Array.from({ length }, () => 0)
     setItemW(itemW)
-    setCol(col)
+    setCol(colums)
   }
 
   const renderLayout = (data: WaterData[]) => {

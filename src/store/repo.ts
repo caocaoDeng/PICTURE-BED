@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { AppDispatch, RootState } from './index'
 import { REPONAME } from '@/config'
 import { SET_REPO_PATH, SET_REPO_CONTENT } from './const'
-import type { RepoPathAction, RepoState } from './interface'
+import type { RepoPathAction, RepoState, User } from './interface'
 import { ActionType } from './interface'
 import { RepoContent } from '@/api/interface'
 import api from '@/api'
@@ -41,8 +41,12 @@ export const userSlice = createSlice({
 export const { setRepoPath, setRepoContent } = userSlice.actions
 
 export const fetchRepo = () => {
-  return async () => {
-    return await api.getRepo({ owner: 'caocaoDeng', repo: REPONAME })
+  return async (_: AppDispatch, getState: () => RootState) => {
+    const { user } = getState()
+    return await api.getRepo({
+      owner: (user.user as User).login,
+      repo: REPONAME,
+    })
   }
 }
 
@@ -58,10 +62,10 @@ export const createRepo = () => {
 
 export const fetchRepoContent = () => {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
-    const { repo } = getState()
+    const { user, repo } = getState()
     const res = await api.getReposContent({
-      owner: 'caocaoDeng',
-      repo: 'UELDVFVSRS1CRUQ-',
+      owner: (user.user as User).login,
+      repo: REPONAME,
       path: repo.path.join('').replace(/Root/, ''),
     })
     dispatch(setRepoContent(res))
