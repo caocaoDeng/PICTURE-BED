@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { setRepoPath, fetchRepoContent } from '@/store/repo'
+import Popover from '@/components/Popover'
 import { REPONAME } from '@/config'
 import { ActionType } from '@/store/interface'
 
@@ -10,6 +11,7 @@ export default function Sider() {
   const dispatch = useAppDispatch()
   const { content } = useAppSelector(state => state.repo)
 
+  const [visible, setVisible] = useState<boolean>(false)
   const [pathIndex, setPathIndex] = useState<number | null>(null)
 
   const dirList = () => {
@@ -34,6 +36,7 @@ export default function Sider() {
           defaultValue={REPONAME}
         />
       </div>
+
       <ul className="flex-1 px-2.5 overflow-auto">
         {dirList().map(({ name, path }, index) => (
           <li
@@ -53,6 +56,7 @@ export default function Sider() {
           </li>
         ))}
       </ul>
+
       <div className="flex gap-3 p-2.5">
         <input
           type="text"
@@ -61,9 +65,11 @@ export default function Sider() {
         />
         <div className="flex gap-2">
           <button>新建目录</button>
-          <button>上传</button>
+          <button onClick={() => setVisible(true)}>上传</button>
         </div>
       </div>
+
+      <Popover visible={visible} title="弹窗"></Popover>
     </nav>
   )
 }
