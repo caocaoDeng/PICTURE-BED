@@ -5,7 +5,7 @@ export default function FilePick({
   onChange,
 }: {
   children?: React.ReactNode
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) {
   const inputEle = useRef<HTMLInputElement>(null)
 
@@ -13,14 +13,14 @@ export default function FilePick({
 
   return (
     <div
-      className="com-upload flex flex-col items-center justify-center w-72 h-72 border border-dashed border-slate-300 rounded cursor-pointer hover:border-slate-800"
+      className="com-upload flex flex-col items-center justify-center w-72 h-72 border border-dashed border-bcolor rounded cursor-pointer hover:border-foreground hover:text-foreground!"
       onClick={triggerPick}>
       {children || (
         <>
           <i
-            className="iconfont icon-tuya- leading-none text-slate-300 hover:text-slate-500"
+            className="iconfont icon-tuya- leading-none text-bcolor"
             style={{ fontSize: '64px' }}></i>
-          <span className="text-slate-300">选择文件</span>
+          <span className="text-bcolor">选择文件</span>
         </>
       )}
       <input
@@ -29,7 +29,7 @@ export default function FilePick({
         className="hidden"
         type="file"
         accept="image/*"
-        onChange={onChange}
+        onChange={e => onChange && onChange(e)}
       />
     </div>
   )
