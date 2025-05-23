@@ -52,11 +52,11 @@ export default function WaterFall({
       // y偏移量
       const offsetY = col[minIndex]
       // 渲染的高度
-      const renderH = (itemW * item.height) / item.width
-      col[minIndex] += renderH + gap
+      const itemH = (itemW * item.height) / item.width
+      col[minIndex] += itemH + gap
       setWaterFallData(preData => [
         ...preData,
-        { ...item, renderH, offsetX, offsetY },
+        { ...item, itemW, itemH, offsetX, offsetY },
       ])
     })
   }
@@ -72,17 +72,15 @@ export default function WaterFall({
   }, [data])
 
   return (
-    <div
-      ref={containerElm}
-      className="relative w-full"
-      style={{ '--itemW': `${itemW}px` } as React.CSSProperties}>
+    <div ref={containerElm} className="relative w-full">
       {waterfallData.map(
         ({
           sha,
           name,
           width,
           height,
-          renderH,
+          itemW,
+          itemH,
           offsetX,
           offsetY,
           download_url,
@@ -92,8 +90,8 @@ export default function WaterFall({
               key={sha}
               className="absolute top-0 left-0"
               style={{
-                width: 'var(--itemW)',
-                height: `${renderH}px`,
+                width: `${itemW}px`,
+                height: `${itemH}px`,
                 transform: `translate(${offsetX}px, ${offsetY}px)`,
               }}>
               <Image

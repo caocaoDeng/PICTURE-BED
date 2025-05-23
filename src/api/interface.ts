@@ -30,6 +30,8 @@ export interface RepoContent {
 export interface WaterData extends RepoContent {
   width: number
   height: number
+  itemW?: number
+  itemH?: number
   offsetX?: number
   offsetY?: number
 }
