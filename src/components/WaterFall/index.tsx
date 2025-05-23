@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { WaterData } from '@/api/interface'
-import styles from './waterfall.module.scss'
 
 export interface Action {
   type: string
