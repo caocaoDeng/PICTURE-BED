@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { setRepoPath, fetchRepoContent } from '@/store/repo'
+import UploadModal, { ModalEmit } from './components/upload'
 import { REPONAME } from '@/config'
 import { ActionType } from '@/store/interface'
 
@@ -10,6 +11,7 @@ export default function Sider() {
   const dispatch = useAppDispatch()
   const { content } = useAppSelector(state => state.repo)
 
+  const uploadModalElm = useRef<ModalEmit>(null)
   const [pathIndex, setPathIndex] = useState<number | null>(null)
 
   const dirList = () => {
@@ -22,6 +24,10 @@ export default function Sider() {
     await dispatch(setRepoPath({ type: ActionType.JOIN, path }))
     await dispatch(fetchRepoContent())
     setPathIndex(null)
+  }
+
+  const openModal = () => {
+    uploadModalElm.current?.setVisible(true)
   }
 
   return (
@@ -63,9 +69,11 @@ export default function Sider() {
         />
         <div className="flex gap-2">
           <button>新建目录</button>
-          <button>上传</button>
+          <button onClick={openModal}>上传</button>
         </div>
       </div>
+
+      <UploadModal ref={uploadModalElm}></UploadModal>
     </nav>
   )
 }

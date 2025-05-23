@@ -95,7 +95,7 @@ export default function WaterFall({
                 transform: `translate(${offsetX}px, ${offsetY}px)`,
               }}>
               <Image
-                style={{ width: '100%' }}
+                className="w-full"
                 src={download_url}
                 width={width}
                 height={height}

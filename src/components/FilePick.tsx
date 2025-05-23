@@ -13,14 +13,16 @@ export default function FilePick({
 
   return (
     <div
-      className="com-upload flex flex-col items-center justify-center w-72 h-72 border border-dashed border-bcolor rounded cursor-pointer hover:border-foreground hover:text-foreground!"
+      className="com-upload group flex flex-col items-center justify-center w-72 h-72 border border-dashed border-bcolor rounded cursor-pointer hover:border-foreground hover:text-foreground"
       onClick={triggerPick}>
       {children || (
         <>
           <i
-            className="iconfont icon-tuya- leading-none text-bcolor"
+            className="iconfont icon-tuya- leading-none text-bcolor group-hover:text-foreground"
             style={{ fontSize: '64px' }}></i>
-          <span className="text-bcolor">选择文件</span>
+          <span className="text-bcolor group-hover:text-foreground">
+            选择文件
+          </span>
         </>
       )}
       <input

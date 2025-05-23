@@ -1,15 +1,39 @@
-import React, { useEffect, useState } from 'react'
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+  useState,
+} from 'react'
 import Image from 'next/image'
 import Popover from '@/components/Popover'
 import FilePick from '@/components/FilePick'
 import { onLoadImageInfo, readFile2ArrayBuffer } from '@/utils'
 import { ImageReadResult } from '@/utils/interface'
 
-export default function Upload() {
+export interface ModalEmit {
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface PreviewInfo extends ImageReadResult {
+  transform: string
+}
+
+function UploadModal(
+  _: React.PropsWithChildren,
+  ref: React.ForwardedRef<ModalEmit>
+) {
   const [visible, setVisible] = useState<boolean>(false)
-  const [count, setCount] = useState<number>(5)
-  const [urls, setUrls] = useState([])
-  const [previewList, setPreviewList] = useState<any[]>([])
+  const [images, setImages] = useState<ImageReadResult[]>([])
+  const [bigImage, setBigImage] = useState<PreviewInfo | undefined>(undefined)
+  const [previewList, setPreviewList] = useState<PreviewInfo[]>([])
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setVisible,
+    }),
+    []
+  )
 
   const onPickChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files as FileList
@@ -26,48 +50,68 @@ export default function Upload() {
         height: imageInfo.height,
       })
     }
-    setUrls(images)
+    setImages(images)
   }
-
-  const getTransform = (index: number) => {
-    const offsetDeg = 90 / 5
-    let deg = ((previewList.length - 1) * offsetDeg) / 2
-    deg = -deg + index * offsetDeg
-    return {
-      transform: `rotate(${deg}deg)`,
-    }
-  }
-
-  const renderImage = () => {
-    const imgaes = []
-    for (let i = 0; i < urls.length; i++) {
-      if (i < count) {
-        imgaes.push(<Image key={i} src={urls[i]} alt=""></Image>)
-      } else {
-        const repeatIndex = i % count
-      }
-    }
-    return imgaes
-  }
-
-  const handleClick = () => {}
 
   useEffect(() => {
-    const list = urls.length < 5 ? urls : urls.slice(0, 5)
-    setPreviewList(list)
-  }, [urls])
+    const maxList = images.length < 5 ? images : images.slice(0, 5)
+    // 偏移角度
+    const offsetDeg = 90 / 5
+    // 开始角度
+    const initDeg = (((maxList.length - 1) * offsetDeg) / 2) * -1
+    const finalList: PreviewInfo[] = maxList.map((item, index) => {
+      const deg = initDeg + index * offsetDeg
+      return {
+        ...item,
+        transform: `rotate(${deg}deg)`,
+      }
+    })
+    setBigImage(finalList.at(-1))
+    setPreviewList(finalList)
+  }, [images])
 
   return (
     <React.Fragment>
       <Popover visible={visible} title="弹窗">
         <div className="flex">
           <FilePick onChange={onPickChange}></FilePick>
-          <div className="flex-1">
-            <div></div>
-            <div>{}</div>
+          <div className="flex-1 flex flex-col ml-2">
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 border-b border-dashed border-bcolor">
+              <div className="flex-1 flex items-center justify-center object-contain">
+                {bigImage ? (
+                  <Image
+                    className="w-full"
+                    src={`data:${bigImage.type};base64,${bigImage.base64}`}
+                    width={bigImage.width}
+                    height={bigImage.height}
+                    alt={bigImage.name}></Image>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div className="flex items-center justify-between w-full pb-1">
+                <p>{bigImage?.name}</p>
+                <p>移除</p>
+              </div>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              <div className="relative w-14 h-20">
+                {previewList.map(item => (
+                  <Image
+                    className="absolute top-0 left-0 w-full h-full object-cover origin-bottom rounded-sm shadow-md cursor-pointer"
+                    style={{ transform: item.transform }}
+                    src={`data:${item.type};base64,${item.base64}`}
+                    width={item.width}
+                    height={item.height}
+                    alt={item.name}></Image>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </Popover>
     </React.Fragment>
   )
 }
+
+export default forwardRef(UploadModal)
