@@ -26,6 +26,16 @@ export const readFile2ArrayBuffer = (file: File): Promise<ArrayBuffer> => {
   })
 }
 
+/**
+ *
+ * @param type 文件类型
+ * @param base64 base64
+ * @returns string
+ */
+export const base642Image = (type: string, base64: Base64URLString) => {
+  return `data:${type};base64,${base64}`
+}
+
 // 加载图片信息
 export const onLoadImageInfo = (
   value: File | Base64URLString | string

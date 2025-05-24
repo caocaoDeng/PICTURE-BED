@@ -7,7 +7,7 @@ import React, {
 import Image from 'next/image'
 import Popover from '@/components/Popover'
 import FilePick from '@/components/FilePick'
-import { onLoadImageInfo, readFile2ArrayBuffer } from '@/utils'
+import { onLoadImageInfo, readFile2ArrayBuffer, base642Image } from '@/utils'
 import { ImageReadResult } from '@/utils/interface'
 
 export interface ModalEmit {
@@ -37,8 +37,8 @@ function UploadModal(
 
   const [images, setImages] = useState<ImageReadResult[]>([])
 
-  const [bigImage, setBigImage] = useState<PreviewInfo | undefined>(undefined)
-  const [previewList, setPreviewList] = useState<PreviewInfo[]>([])
+  const [imgInfo, setImgInfo] = useState<PreviewInfo | undefined>(undefined)
+  const [list, setList] = useState<PreviewInfo[]>([])
 
   useImperativeHandle(
     ref,
@@ -53,8 +53,9 @@ function UploadModal(
     const images: ImageReadResult[] = []
     for (const f of fileList) {
       const arrayBuffer = await readFile2ArrayBuffer(f)
-      const base64 = Buffer.from(arrayBuffer).toString('base64')
-      const imageInfo = await onLoadImageInfo(`data:${f.type};base64,${base64}`)
+      let base64 = Buffer.from(arrayBuffer).toString('base64')
+      base64 = base642Image(f.type, base64)
+      const imageInfo = await onLoadImageInfo(base64)
       images.push({
         name: f.name,
         type: f.type,
@@ -67,7 +68,7 @@ function UploadModal(
   }
 
   const remove = () => {
-    const finalList = images.filter(item => item.base64 !== bigImage?.base64)
+    const finalList = images.filter(item => item.base64 !== imgInfo?.base64)
     setImages(finalList)
   }
 
@@ -91,15 +92,15 @@ function UploadModal(
     config.offsetDeg = offsetDeg
     config.index = images.length % list.length
     config.previewIndex = list.length - 1
-    setPreviewList(finalList)
+    setList(finalList)
   }
 
   const loop = () => {
     const { offsetDeg, startDeg, index, previewIndex } = config
     const curIndex = index === 0 ? images.length - 1 : index - 1
     const curPreviewIndex =
-      previewIndex === 0 ? previewList.length - 1 : previewIndex - 1
-    const finalList = previewList.map(item => {
+      previewIndex === 0 ? list.length - 1 : previewIndex - 1
+    const finalList = list.map(item => {
       const isRest = item.deg >= Math.abs(startDeg)
       return {
         ...item,
@@ -111,7 +112,7 @@ function UploadModal(
     })
     config.index = curIndex
     config.previewIndex = curPreviewIndex
-    setPreviewList(finalList)
+    setList(finalList)
   }
 
   useEffect(() => {
@@ -119,8 +120,8 @@ function UploadModal(
   }, [images])
 
   useEffect(() => {
-    setBigImage(previewList[config.previewIndex])
-  }, [previewList])
+    setImgInfo(list[config.previewIndex])
+  }, [list])
 
   return (
     <React.Fragment>
@@ -132,14 +133,14 @@ function UploadModal(
           <div className="flex-1 flex flex-col min-w-0 ml-2">
             <div className="flex-1 flex flex-col items-center gap-2 min-h-0 border-b border-dashed border-bcolor">
               <div className="group relative flex-1 flex items-center justify-center min-h-0 w-full h-full">
-                {bigImage ? (
+                {imgInfo ? (
                   <>
                     <Image
                       className="w-full h-full object-contain rounded-sm"
-                      src={`data:${bigImage.type};base64,${bigImage.base64}`}
-                      width={bigImage.width}
-                      height={bigImage.height}
-                      alt={bigImage.name}></Image>
+                      src={base642Image(imgInfo.type, imgInfo.base64)}
+                      width={imgInfo.width}
+                      height={imgInfo.height}
+                      alt={imgInfo.name}></Image>
                     <div className="absolute inset-0 rounded-sm text-white bg-mask hidden group-hover:block">
                       <span
                         className="iconfont icon-shanchu absolute inset-0 w-max h-max m-auto cursor-pointer"
@@ -150,11 +151,11 @@ function UploadModal(
                   <></>
                 )}
               </div>
-              <div className="w-full pb-1 truncate">{bigImage?.name}</div>
+              <div className="w-full pb-1 truncate">{imgInfo?.name}</div>
             </div>
             <div className="flex-1 flex items-center justify-center">
               <div className="relative w-14 h-20">
-                {previewList.map((item, index) => (
+                {list.map((item, index) => (
                   <Image
                     className="absolute top-0 left-0 w-full h-full object-cover origin-bottom rounded-sm shadow-md cursor-pointer"
                     style={{
@@ -163,7 +164,7 @@ function UploadModal(
                       transitionDuration: `${item.duration}ms`,
                     }}
                     key={index}
-                    src={`data:${item.type};base64,${item.base64}`}
+                    src={base642Image(item.type, item.base64)}
                     width={item.width}
                     height={item.height}
                     alt={item.name}
