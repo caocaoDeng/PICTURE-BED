@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { setRepoPath, fetchRepoContent } from '@/store/repo'
-import UploadModal, { ModalEmit } from './components/upload'
+import ImgUploadModal, { ModalEmit } from '@/components/ImgUploadModal'
 import { REPONAME } from '@/config'
 import { ActionType } from '@/store/interface'
 
@@ -73,7 +73,7 @@ export default function Sider() {
         </div>
       </div>
 
-      <UploadModal ref={uploadModalElm}></UploadModal>
+      <ImgUploadModal ref={uploadModalElm}></ImgUploadModal>
     </nav>
   )
 }
