@@ -67,10 +67,8 @@ function UploadModal(
   }
 
   const remove = () => {
-    // const newImages = images.filter(
-    //   (_, index) => index !== images.length + previewIndex
-    // )
-    // setImages(newImages)
+    const finalList = images.filter(item => item.base64 !== bigImage?.base64)
+    setImages(finalList)
   }
 
   const init = () => {

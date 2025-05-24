@@ -48,7 +48,11 @@ export default function Popover({
         </header>
         <main className="p-4 text-sm">{children}</main>
         <footer className="flex items-center justify-end gap-4 px-4 py-3 border-t border-bcolor">
-          <button onClick={() => onClose && onClose()}>取消</button>
+          <button
+            className="bg-transparent text-foreground"
+            onClick={() => onClose && onClose()}>
+            取消
+          </button>
           <button onClick={() => onSubmit && onSubmit()}>确定</button>
         </footer>
       </div>
