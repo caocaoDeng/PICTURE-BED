@@ -22,9 +22,15 @@ export interface RepoState {
 export enum ActionType {
   JOIN = 'join',
   SLICE = 'slice',
+  REPLACE = 'replace',
 }
 
 export interface RepoPathAction {
   type: ActionType.JOIN | ActionType.SLICE
   path: string | string[]
+}
+
+export interface RepoContentAction {
+  type: ActionType.JOIN | ActionType.REPLACE
+  content: RepoContent | RepoContent[]
 }

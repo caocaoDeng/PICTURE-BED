@@ -45,7 +45,7 @@ export interface Committer {
  * 更新/获取 repos content 的参数
  * 更新时 content committer 必传
  */
-export interface UpdateReposParams {
+export interface UpdateRepoParams {
   sha?: string
   // username
   owner: string
@@ -59,4 +59,9 @@ export interface UpdateReposParams {
   content?: string
   // 提交人
   committer?: Committer
+}
+
+export interface UpdateRepoResult {
+  commiter: object
+  content: RepoContent
 }

@@ -1,6 +1,13 @@
 import octokit from '@/utils/Octokit'
 import { User } from '@/store/interface'
-import { QueryRepo, CreateRepo, ContentParams, RepoContent } from './interface'
+import {
+  QueryRepo,
+  CreateRepo,
+  ContentParams,
+  RepoContent,
+  UpdateRepoParams,
+  UpdateRepoResult,
+} from './interface'
 
 const api = {
   // 获取用户信息
@@ -37,16 +44,18 @@ const api = {
     })
   },
 
-  // // 更新内容
-  // updateReposContent(params: UpdateReposParams) {
-  //   const { owner, repo, path } = params
-  //   return octokit.request<{
-  //     content: ReposContent
-  //   }>('PUT', `/repos/${owner}/${repo}/contents/${path}`, {
-  //     ...params,
-  //     message: 'update resourse',
-  //   })
-  // },
+  // 更新内容
+  updateContentByPath(params: UpdateRepoParams) {
+    const { owner, repo, path } = params
+    return octokit.request<UpdateRepoParams, UpdateRepoResult>({
+      method: 'PUT',
+      url: `/repos/${owner}/${repo}/contents/${path}`,
+      params: {
+        ...params,
+        message: 'update resourse',
+      },
+    })
+  },
 }
 
 export default api

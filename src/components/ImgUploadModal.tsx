@@ -5,10 +5,13 @@ import React, {
   useState,
 } from 'react'
 import Image from 'next/image'
+import { useAppSelector, useAppDispatch } from '@/store/hook'
+import { setRepoContent, updateContent } from '@/store/repo'
 import Popover from '@/components/Popover'
 import FilePick from '@/components/FilePick'
 import { onLoadImageInfo, readFile2ArrayBuffer, base642Image } from '@/utils'
 import { ImageReadResult } from '@/utils/interface'
+import { ActionType } from '@/store/interface'
 
 export interface ModalEmit {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -20,7 +23,7 @@ export interface PreviewInfo extends ImageReadResult {
   duration: number
 }
 
-const config = {
+let config = {
   maxDeg: 90, // 展示的最大角度
   maxCount: 5, // 最大显示数量
   offsetDeg: 0, // 偏移角度
@@ -33,6 +36,9 @@ function UploadModal(
   _: React.PropsWithChildren,
   ref: React.ForwardedRef<ModalEmit>
 ) {
+  const dispatch = useAppDispatch()
+  const { user, repo } = useAppSelector(store => store)
+
   const [visible, setVisible] = useState<boolean>(false)
 
   const [images, setImages] = useState<ImageReadResult[]>([])
@@ -53,9 +59,8 @@ function UploadModal(
     const images: ImageReadResult[] = []
     for (const f of fileList) {
       const arrayBuffer = await readFile2ArrayBuffer(f)
-      let base64 = Buffer.from(arrayBuffer).toString('base64')
-      base64 = base642Image(f.type, base64)
-      const imageInfo = await onLoadImageInfo(base64)
+      const base64 = Buffer.from(arrayBuffer).toString('base64')
+      const imageInfo = await onLoadImageInfo(base642Image(f.type, base64))
       images.push({
         name: f.name,
         type: f.type,
@@ -115,6 +120,36 @@ function UploadModal(
     setList(finalList)
   }
 
+  const reset = () => {
+    setVisible(false)
+    setImages([])
+    config = {
+      maxDeg: 90,
+      maxCount: 5,
+      offsetDeg: 0,
+      startDeg: 0,
+      index: 0,
+      previewIndex: 0,
+    }
+  }
+
+  const submit = async () => {
+    if (!images.length) return
+    const wait = images.map(async ({ name, width, height, base64 }) => {
+      const res = await dispatch(
+        updateContent({
+          fileName: `${width}X${height}^${name}`,
+          content: base64,
+        })
+      )
+      await dispatch(
+        setRepoContent({ type: ActionType.JOIN, content: res.content })
+      )
+    })
+    await Promise.all(wait)
+    reset()
+  }
+
   useEffect(() => {
     init()
   }, [images])
@@ -125,7 +160,11 @@ function UploadModal(
 
   return (
     <React.Fragment>
-      <Popover visible={visible} title="上传图片">
+      <Popover
+        visible={visible}
+        title="上传图片"
+        onClose={reset}
+        onSubmit={submit}>
         <div className="flex">
           <div className="shrink">
             <FilePick onChange={onPickChange}></FilePick>

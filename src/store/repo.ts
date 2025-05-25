@@ -1,16 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { AppDispatch, RootState } from './index'
-import { REPONAME } from '@/config'
+import { REPONAME, ROOT } from '@/config'
 import { SET_REPO_PATH, SET_REPO_CONTENT } from './const'
-import type { RepoPathAction, RepoState, User } from './interface'
-import { ActionType } from './interface'
 import { RepoContent } from '@/api/interface'
+import { ActionType } from './interface'
+import type {
+  RepoContentAction,
+  RepoPathAction,
+  RepoState,
+  User,
+} from './interface'
 import api from '@/api'
 
 // 使用该类型定义初始 state
 const initialState: RepoState = {
   name: REPONAME,
-  path: ['Root'],
+  path: [ROOT],
   content: [],
 }
 
@@ -32,8 +37,22 @@ export const userSlice = createSlice({
         }
       }
     },
-    [SET_REPO_CONTENT]: (state, action: PayloadAction<RepoContent[]>) => {
-      state.content = action.payload
+    [SET_REPO_CONTENT]: (
+      state,
+      { payload }: PayloadAction<RepoContentAction>
+    ) => {
+      const { type, content } = payload
+      switch (type) {
+        case ActionType.JOIN: {
+          state.content = [...state.content, content as RepoContent]
+          break
+        }
+
+        case ActionType.REPLACE: {
+          state.content.push(...(content as RepoContent[]))
+          break
+        }
+      }
     },
   },
 })
@@ -42,18 +61,19 @@ export const { setRepoPath, setRepoContent } = userSlice.actions
 
 export const fetchRepo = () => {
   return async (_: AppDispatch, getState: () => RootState) => {
-    const { user } = getState()
+    const { user, repo } = getState()
     return await api.getRepo({
       owner: (user.user as User).login,
-      repo: REPONAME,
+      repo: repo.name,
     })
   }
 }
 
 export const createRepo = () => {
-  return async () => {
+  return async (_: AppDispatch, getState: () => RootState) => {
+    const { repo } = getState()
     return await api.createRepo({
-      name: REPONAME,
+      name: repo.name,
       description: 'picture manage',
       private: true,
     })
@@ -65,10 +85,33 @@ export const fetchRepoContent = () => {
     const { user, repo } = getState()
     const res = await api.getReposContent({
       owner: (user.user as User).login,
-      repo: REPONAME,
-      path: repo.path.join('').replace(/Root/, ''),
+      repo: repo.name,
+      path: repo.path.join('/').replace(/Root/, ''),
     })
-    dispatch(setRepoContent(res))
+    dispatch(setRepoContent({ type: ActionType.REPLACE, content: res }))
+  }
+}
+
+export const updateContent = ({
+  fileName,
+  content,
+}: {
+  fileName: string
+  content: Base64URLString
+}) => {
+  return async (_: AppDispatch, getState: () => RootState) => {
+    const { user, repo } = getState()
+    const { login, name, email } = user.user as User
+    const path = repo.path.join('/').replace(/Root/, '')
+    const res = await api.updateContentByPath({
+      owner: login,
+      repo: repo.name,
+      path: path ? `${path}/` : fileName,
+      message: '',
+      committer: { name, email },
+      content,
+    })
+    return res
   }
 }
 
