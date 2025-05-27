@@ -1,24 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { WaterData } from '@/api/interface'
-
-export interface Action {
-  type: string
-  payload: {
-    name: string
-    url: string
-  }
-}
+import type { WaterData } from '@/api/interface'
 
 export default function WaterFall({
   itemMaxW,
   gap,
   data,
+  actions,
+  dispatchAction,
 }: {
   itemMaxW: number
   gap: number
   data: WaterData[]
-  onClick?: (p: WaterData) => void
+  actions?: readonly any[]
+  dispatchAction?: (type: any, item: WaterData) => void
 }) {
   const containerElm = useRef<HTMLDivElement>(null)
   const [itemW, setItemW] = useState<number>(0)
@@ -43,7 +38,7 @@ export default function WaterFall({
     setCol(colums)
   }
 
-  const renderLayout = (data: WaterData[]) => {
+  const computedOffset = (data: WaterData[]) => {
     data.forEach(item => {
       // 获取列高度最小的下标
       const minIndex = col.indexOf(Math.min(...col))
@@ -61,49 +56,53 @@ export default function WaterFall({
     })
   }
 
-  useEffect(init, [])
+  const renderLayout = () => {
+    init()
+    computedOffset(data)
+  }
 
   useEffect(() => {
-    renderLayout(data)
-    // window.addEventListener('resize', updateData)
-    // return () => {
-    //   window.removeEventListener('resize', updateData)
-    // }
+    window.addEventListener('resize', renderLayout)
+    return () => {
+      window.removeEventListener('resize', renderLayout)
+    }
+  }, [])
+
+  useEffect(() => {
+    computedOffset(data)
   }, [data])
 
   return (
     <div ref={containerElm} className="relative w-full">
-      {waterfallData.map(
-        ({
-          sha,
-          name,
-          width,
-          height,
-          itemW,
-          itemH,
-          offsetX,
-          offsetY,
-          download_url,
-        }) => {
-          return (
-            <div
-              key={sha}
-              className="absolute top-0 left-0"
-              style={{
-                width: `${itemW}px`,
-                height: `${itemH}px`,
-                transform: `translate(${offsetX}px, ${offsetY}px)`,
-              }}>
-              <Image
-                className="w-full"
-                src={download_url}
-                width={width}
-                height={height}
-                alt={name}></Image>
-            </div>
-          )
-        }
-      )}
+      {waterfallData.map(item => {
+        return (
+          <div
+            key={item.sha}
+            className="absolute top-0 left-0 border-bcolor rounded-md"
+            style={{
+              width: `${item.itemW}px`,
+              height: `${item.itemH}px`,
+              transform: `translate(${item.offsetX}px, ${item.offsetY}px)`,
+            }}>
+            <Image
+              className="w-full"
+              src={item.download_url}
+              width={item.width}
+              height={item.height}
+              alt={item.name}></Image>
+            <ul className="flex items-center justify-end gap-2 absolute top-0 left-0 w-full p-2">
+              {actions?.map(({ type, icon }) => (
+                <li
+                  key={type}
+                  className={`iconfont ${icon} cursor-pointer p-2 bg-mask hover:text-white`}
+                  onClick={() =>
+                    dispatchAction && dispatchAction(type, item)
+                  }></li>
+              ))}
+            </ul>
+          </div>
+        )
+      })}
     </div>
   )
 }
