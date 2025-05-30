@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hook'
-import { fetchRepoContent } from '@/store/repo'
+import { createRepo, fetchRepo, fetchRepoContent } from '@/store/repo'
 import Layout from '@/components/Layout'
 import WaterFall from '@/components/WaterFall'
 import { download } from '@/utils'
@@ -51,6 +51,12 @@ export default function Home() {
         return await navigator.clipboard.writeText(item.download_url)
       }
     }
+  }
+
+  const getData = async () => {
+    const repo = await dispatch(fetchRepo())
+    if (!repo) await dispatch(createRepo())
+    const content = await dispatch(fetchRepoContent())
   }
 
   useEffect(() => {

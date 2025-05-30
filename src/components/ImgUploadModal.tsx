@@ -107,12 +107,12 @@ function UploadModal(
       previewIndex === 0 ? list.length - 1 : previewIndex - 1
     const finalList = list.map(item => {
       const isRest = item.deg >= Math.abs(startDeg)
+      const itemInfo = isRest ? images[curIndex] : item
       return {
-        ...item,
+        ...itemInfo,
         deg: isRest ? startDeg : item.deg + offsetDeg,
         zIndex: isRest ? 0 : item.zIndex + 1,
         duration: isRest ? 0 : 200,
-        base64: isRest ? images[curIndex].base64 : item.base64,
       }
     })
     config.index = curIndex
