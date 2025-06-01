@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
-import { fetchRepoContent, setRepoPath } from '@/store/repo'
+import { fetchRepoContent, setRepoPath, setRepoContent } from '@/store/repo'
 import { ActionType } from '@/store/interface'
 
 export default function Header() {
@@ -13,8 +13,9 @@ export default function Header() {
   const handleEntryPath = async (index: number) => {
     if (index === path.length - 1) return
     const entryPath = path.slice(0, index + 1)
+    const content = await dispatch(fetchRepoContent(entryPath))
     await dispatch(setRepoPath({ type: ActionType.SLICE, path: entryPath }))
-    await dispatch(fetchRepoContent())
+    await dispatch(setRepoContent({ type: ActionType.REPLACE, content }))
   }
 
   return (

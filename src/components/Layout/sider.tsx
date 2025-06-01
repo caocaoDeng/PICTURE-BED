@@ -1,34 +1,36 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
-import { setRepoPath, fetchRepoContent } from '@/store/repo'
+import { setRepoPath, setRepoContent, fetchRepoContent } from '@/store/repo'
+import CreateCategory from '@/components/CreateCategory'
 import ImgUploadModal, { ModalEmit } from '@/components/ImgUploadModal'
 import { REPONAME } from '@/config'
 import { ActionType } from '@/store/interface'
+import { RepoContent } from '@/api/interface'
 
 export default function Sider() {
   const dispatch = useAppDispatch()
-  const { content } = useAppSelector(state => state.repo)
+  const { path, content } = useAppSelector(state => state.repo)
 
+  const categoryElm = useRef<ModalEmit>(null)
   const uploadModalElm = useRef<ModalEmit>(null)
+  const [dirs, setDirs] = useState<RepoContent[]>([])
   const [pathIndex, setPathIndex] = useState<number | null>(null)
 
-  const dirList = () => {
-    return content.filter(item => item.type === 'dir')
-  }
-
-  const handleClick = async (path: string, index: number) => {
+  const handleClick = async (dirPath: string, index: number) => {
     if (pathIndex !== null) return
     setPathIndex(index)
-    await dispatch(setRepoPath({ type: ActionType.JOIN, path }))
-    await dispatch(fetchRepoContent())
+    const content = await dispatch(fetchRepoContent(path.concat(dirPath)))
+    await dispatch(setRepoPath({ type: ActionType.JOIN, path: dirPath }))
+    await dispatch(setRepoContent({ type: ActionType.REPLACE, content }))
     setPathIndex(null)
   }
 
-  const openModal = () => {
-    uploadModalElm.current?.setVisible(true)
-  }
+  useEffect(() => {
+    const category = content.filter(item => item.type === 'dir')
+    setDirs(category)
+  }, [content])
 
   return (
     <nav className="flex flex-col w-64 h-full border-r border-bcolor text-sm">
@@ -42,7 +44,7 @@ export default function Sider() {
       </div>
 
       <ul className="flex-1 px-2.5 overflow-auto">
-        {dirList().map(({ name, path }, index) => (
+        {dirs.map(({ name, path }, index) => (
           <li
             key={index}
             onClick={() => handleClick(path, index)}
@@ -68,12 +70,17 @@ export default function Sider() {
           className="flex-1 px-2.5 py-1.5 rounded-full border-0 indent-2 focus:border-0 focus:ring-0 placeholder:text-xs"
         />
         <div className="flex gap-2">
-          <button>新建目录</button>
-          <button onClick={openModal}>上传</button>
+          <button onClick={() => categoryElm.current?.setVisible(true)}>
+            新建目录
+          </button>
+          <button onClick={() => uploadModalElm.current?.setVisible(true)}>
+            上传
+          </button>
         </div>
       </div>
 
       <ImgUploadModal ref={uploadModalElm}></ImgUploadModal>
+      <CreateCategory ref={categoryElm}></CreateCategory>
     </nav>
   )
 }

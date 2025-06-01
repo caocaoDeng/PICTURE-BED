@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import type { WaterData } from '@/api/interface'
+import type { RepoContent, WaterData } from '@/api/interface'
 
 export default function WaterFall({
   itemMaxW,
@@ -39,6 +39,7 @@ export default function WaterFall({
   }
 
   const computedOffset = (data: WaterData[]) => {
+    setWaterFallData([])
     data.forEach(item => {
       // 获取列高度最小的下标
       const minIndex = col.indexOf(Math.min(...col))
@@ -62,10 +63,11 @@ export default function WaterFall({
   }
 
   useEffect(() => {
-    window.addEventListener('resize', renderLayout)
-    return () => {
-      window.removeEventListener('resize', renderLayout)
-    }
+    renderLayout()
+    // window.addEventListener('resize', renderLayout)
+    // return () => {
+    //   window.removeEventListener('resize', renderLayout)
+    // }
   }, [])
 
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function WaterFall({
         return (
           <div
             key={item.sha}
-            className="absolute top-0 left-0 border-bcolor rounded-md"
+            className="overflow-hidden absolute top-0 left-0 border-bcolor rounded-lg"
             style={{
               width: `${item.itemW}px`,
               height: `${item.itemH}px`,
@@ -94,7 +96,7 @@ export default function WaterFall({
               {actions?.map(({ type, icon }) => (
                 <li
                   key={type}
-                  className={`iconfont ${icon} cursor-pointer p-2 bg-mask hover:text-white`}
+                  className={`iconfont ${icon} cursor-pointer px-1 rounded bg-mask hover:text-white`}
                   onClick={() =>
                     dispatchAction && dispatchAction(type, item)
                   }></li>

@@ -80,15 +80,15 @@ export const createRepo = () => {
   }
 }
 
-export const fetchRepoContent = () => {
-  return async (dispatch: AppDispatch, getState: () => RootState) => {
+export const fetchRepoContent = (path?: string[]) => {
+  return async (_: AppDispatch, getState: () => RootState) => {
     const { user, repo } = getState()
-    const res = await api.getReposContent({
+    const fullPath = (path || repo.path).join('/').replace(/Root/, '')
+    return await api.getReposContent({
       owner: (user.user as User).login,
       repo: repo.name,
-      path: repo.path.join('/').replace(/Root/, ''),
+      path: fullPath,
     })
-    dispatch(setRepoContent({ type: ActionType.REPLACE, content: res }))
   }
 }
 
@@ -106,7 +106,7 @@ export const updateContent = ({
     const res = await api.updateContentByPath({
       owner: login,
       repo: repo.name,
-      path: path ? `${path}/` : fileName,
+      path: path ? `${path}/${fileName}` : fileName,
       message: '',
       committer: { name, email },
       content,

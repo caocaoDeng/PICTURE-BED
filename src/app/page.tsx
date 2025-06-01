@@ -1,12 +1,18 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hook'
-import { createRepo, fetchRepo, fetchRepoContent } from '@/store/repo'
+import {
+  createRepo,
+  fetchRepo,
+  fetchRepoContent,
+  setRepoContent,
+} from '@/store/repo'
 import Layout from '@/components/Layout'
 import WaterFall from '@/components/WaterFall'
 import { download } from '@/utils'
 import type { WaterData } from '@/api/interface'
+import { ActionType } from '@/store/interface'
 
 const actions = [
   {
@@ -25,21 +31,7 @@ export default function Home() {
   const dispatch = useAppDispatch()
 
   const { user, repo } = useAppSelector(state => state)
-
-  const getImageData = () => {
-    return repo.content
-      .filter(item => item.type === 'file')
-      .map(item => {
-        const [sizeStr, fileName] = item.name.split('^')
-        const [width, height] = sizeStr.split('X').map(item => +item)
-        return {
-          ...item,
-          name: fileName,
-          width,
-          height,
-        }
-      })
-  }
+  const [images, setImages] = useState<WaterData[]>([])
 
   const handleAction = async (type: Action, item: WaterData) => {
     switch (type) {
@@ -53,20 +45,43 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    const repoImageFiles = repo.content
+      .filter(item => item.type === 'file')
+      .map(item => {
+        const [sizeStr, fileName] = item.name.split('^')
+        const [width, height] = sizeStr.split('X').map(item => +item)
+        return {
+          ...item,
+          name: fileName,
+          width,
+          height,
+        }
+      })
+    setImages(repoImageFiles)
+  }, [repo.content])
+
   const getData = async () => {
-    const repo = await dispatch(fetchRepo())
-    if (!repo) await dispatch(createRepo())
-    const content = await dispatch(fetchRepoContent())
+    try {
+      await dispatch(fetchRepo())
+      const content = await dispatch(fetchRepoContent())
+      await dispatch(setRepoContent({ type: ActionType.REPLACE, content }))
+    } catch (error: any) {
+      // 不存在自动创建目录
+      if (/Not Found/.test(error.message)) {
+        await dispatch(createRepo())
+      }
+    }
   }
 
   useEffect(() => {
-    user.user && dispatch(fetchRepoContent())
+    user.user && getData()
   }, [user])
 
   return (
     <Layout>
       <WaterFall
-        data={getImageData()}
+        data={images}
         itemMaxW={200}
         gap={10}
         actions={actions}
