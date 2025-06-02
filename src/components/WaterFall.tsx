@@ -39,6 +39,7 @@ export default function WaterFall({
   }
 
   const computedOffset = (data: WaterData[]) => {
+    setCol(h => h.fill(0))
     setWaterFallData([])
     data.forEach(item => {
       // 获取列高度最小的下标

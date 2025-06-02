@@ -27,12 +27,12 @@ export const userSlice = createSlice({
       const { type, path } = payload
       switch (type) {
         case ActionType.JOIN: {
-          state.path.push(path as string)
+          state.path = [...state.path, path as string]
           break
         }
 
         case ActionType.SLICE: {
-          state.path = [...(path as string[])]
+          state.path = path as string[]
           break
         }
       }
@@ -49,7 +49,7 @@ export const userSlice = createSlice({
         }
 
         case ActionType.REPLACE: {
-          state.content.push(...(content as RepoContent[]))
+          state.content = content as RepoContent[]
           break
         }
       }
@@ -83,7 +83,7 @@ export const createRepo = () => {
 export const fetchRepoContent = (path?: string[]) => {
   return async (_: AppDispatch, getState: () => RootState) => {
     const { user, repo } = getState()
-    const fullPath = (path || repo.path).join('/').replace(/Root/, '')
+    const fullPath = (path || repo.path).join('/').replace(/Root\/?/, '')
     return await api.getReposContent({
       owner: (user.user as User).login,
       repo: repo.name,
@@ -102,7 +102,7 @@ export const updateContent = ({
   return async (_: AppDispatch, getState: () => RootState) => {
     const { user, repo } = getState()
     const { login, name, email } = user.user as User
-    const path = repo.path.join('/').replace(/Root/, '')
+    const path = repo.path.join('/').replace(/Root\/?/, '')
     const res = await api.updateContentByPath({
       owner: login,
       repo: repo.name,

@@ -24,6 +24,16 @@ export default function Popover({
   onSubmit,
 }: Popover) {
   const popoverElm = useRef<HTMLDivElement>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true)
+      onSubmit && (await onSubmit())
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     popoverElm.current?.togglePopover()
@@ -53,7 +63,16 @@ export default function Popover({
             onClick={() => onClose && onClose()}>
             取消
           </button>
-          <button onClick={() => onSubmit && onSubmit()}>确定</button>
+          <button
+            className="flex items-center gap-1"
+            disabled={loading}
+            onClick={handleSubmit}>
+            <span
+              className={`w-4 h-4 animate-spin iconfont icon-loading1 ${
+                loading ? 'flex items-center' : 'hidden'
+              }`}></span>
+            <span>确定</span>
+          </button>
         </footer>
       </div>
     </div>

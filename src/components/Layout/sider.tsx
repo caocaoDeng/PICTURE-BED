@@ -19,12 +19,15 @@ export default function Sider() {
   const [pathIndex, setPathIndex] = useState<number | null>(null)
 
   const handleClick = async (dirPath: string, index: number) => {
-    if (pathIndex !== null) return
-    setPathIndex(index)
-    const content = await dispatch(fetchRepoContent(path.concat(dirPath)))
-    await dispatch(setRepoPath({ type: ActionType.JOIN, path: dirPath }))
-    await dispatch(setRepoContent({ type: ActionType.REPLACE, content }))
-    setPathIndex(null)
+    try {
+      if (pathIndex !== null) return
+      setPathIndex(index)
+      const content = await dispatch(fetchRepoContent(path.concat(dirPath)))
+      await dispatch(setRepoPath({ type: ActionType.JOIN, path: dirPath }))
+      await dispatch(setRepoContent({ type: ActionType.REPLACE, content }))
+    } finally {
+      setPathIndex(null)
+    }
   }
 
   useEffect(() => {

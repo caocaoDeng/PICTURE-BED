@@ -1,8 +1,10 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react'
 import { useAppDispatch } from '@/store/hook'
-import { fetchRepoContent, updateContent } from '@/store/repo'
+import { updateContent, setRepoContent } from '@/store/repo'
 import Popover from '@/components/Popover'
 import { defaultImg } from '@/config'
+import { ActionType } from '@/store/interface'
+import { RepoContent } from '@/api/interface'
 
 export interface ModalEmit {
   setVisible: React.Dispatch<React.SetStateAction<boolean>>
@@ -33,13 +35,21 @@ function UploadModal(
 
   const handleSubmit = async () => {
     if (!name) return setRequired(true)
-    await dispatch(
+    const res = await dispatch(
       updateContent({
         fileName: `${name}/200X200^favicon.ico`,
         content: defaultImg,
       })
     )
-    await dispatch(fetchRepoContent())
+    const dirName = res.content.path.split('/')[0]
+    const file2Dir: RepoContent = {
+      ...res.content,
+      type: 'dir',
+      name: dirName,
+      path: dirName,
+      download_url: '',
+    }
+    await dispatch(setRepoContent({ type: ActionType.JOIN, content: file2Dir }))
     handleReset()
   }
 
