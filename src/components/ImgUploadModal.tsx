@@ -23,7 +23,7 @@ export interface PreviewInfo extends ImageReadResult {
   duration: number
 }
 
-let config = {
+const initConfig = {
   maxDeg: 90, // 展示的最大角度
   maxCount: 5, // 最大显示数量
   offsetDeg: 0, // 偏移角度
@@ -37,12 +37,10 @@ function UploadModal(
   ref: React.ForwardedRef<ModalEmit>
 ) {
   const dispatch = useAppDispatch()
-  const { user, repo } = useAppSelector(store => store)
 
   const [visible, setVisible] = useState<boolean>(false)
-
+  const [config, setConfig] = useState(initConfig)
   const [images, setImages] = useState<ImageReadResult[]>([])
-
   const [imgInfo, setImgInfo] = useState<PreviewInfo | undefined>(undefined)
   const [list, setList] = useState<PreviewInfo[]>([])
 
@@ -93,11 +91,14 @@ function UploadModal(
         duration: 200,
       }
     })
-    config.startDeg = startDeg
-    config.offsetDeg = offsetDeg
-    config.index = images.length % list.length
-    config.previewIndex = list.length - 1
     setList(finalList)
+    setConfig(cfg => ({
+      ...cfg,
+      startDeg,
+      offsetDeg,
+      index: images.length % list.length,
+      previewIndex: list.length - 1,
+    }))
   }
 
   const loop = () => {
@@ -115,22 +116,18 @@ function UploadModal(
         duration: isRest ? 0 : 200,
       }
     })
-    config.index = curIndex
-    config.previewIndex = curPreviewIndex
     setList(finalList)
+    setConfig(cfg => ({
+      ...cfg,
+      index: curIndex,
+      previewIndex: curPreviewIndex,
+    }))
   }
 
   const reset = () => {
     setVisible(false)
     setImages([])
-    config = {
-      maxDeg: 90,
-      maxCount: 5,
-      offsetDeg: 0,
-      startDeg: 0,
-      index: 0,
-      previewIndex: 0,
-    }
+    setConfig(initConfig)
   }
 
   const submit = async () => {
@@ -166,7 +163,7 @@ function UploadModal(
         onClose={reset}
         onSubmit={submit}>
         <div className="flex">
-          <div className="shrink">
+          <div className="shrink-0">
             <FilePick onChange={onPickChange}></FilePick>
           </div>
           <div className="flex-1 flex flex-col min-w-0 ml-2">
@@ -175,7 +172,7 @@ function UploadModal(
                 {imgInfo ? (
                   <>
                     <Image
-                      className="w-full h-full object-contain rounded-sm"
+                      className="absolute w-full h-full object-contain rounded-sm"
                       src={base642Image(imgInfo.type, imgInfo.base64)}
                       width={imgInfo.width}
                       height={imgInfo.height}

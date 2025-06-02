@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import type { RepoContent, WaterData } from '@/api/interface'
+import type { WaterData } from '@/api/interface'
 
 export default function WaterFall({
   itemMaxW,
@@ -32,13 +32,13 @@ export default function WaterFall({
     // gap 总宽度
     const gapW = (length - 1) * gap
     // 根据列重新计算每一项的宽度
-    const itemW = (divInfo.width - gapW) / length
+    const divW = (divInfo.width - gapW) / length
     const colums = Array.from({ length }, () => 0)
-    setItemW(itemW)
+    setItemW(divW)
     setCol(colums)
   }
 
-  const computedOffset = (data: WaterData[]) => {
+  const computedOffset = () => {
     setCol(h => h.fill(0))
     setWaterFallData([])
     data.forEach(item => {
@@ -51,6 +51,7 @@ export default function WaterFall({
       // 渲染的高度
       const itemH = (itemW * item.height) / item.width
       col[minIndex] += itemH + gap
+      setCol([...col])
       setWaterFallData(preData => [
         ...preData,
         { ...item, itemW, itemH, offsetX, offsetY },
@@ -58,37 +59,34 @@ export default function WaterFall({
     })
   }
 
-  const renderLayout = () => {
-    init()
-    computedOffset(data)
-  }
+  useEffect(computedOffset, [data, itemW])
 
   useEffect(() => {
-    renderLayout()
-    // window.addEventListener('resize', renderLayout)
-    // return () => {
-    //   window.removeEventListener('resize', renderLayout)
-    // }
+    init()
+    computedOffset()
+    window.addEventListener('resize', init)
+    return () => {
+      window.removeEventListener('resize', init)
+    }
   }, [])
 
-  useEffect(() => {
-    computedOffset(data)
-  }, [data])
-
   return (
-    <div ref={containerElm} className="relative w-full">
+    <div
+      ref={containerElm}
+      className="relative w-full"
+      style={{ height: `${Math.max(...col)}px` }}>
       {waterfallData.map(item => {
         return (
           <div
             key={item.sha}
-            className="overflow-hidden absolute top-0 left-0 border-bcolor rounded-lg"
+            className="overflow-hidden absolute top-0 left-0 border-1 border-bcolor rounded-lg cursor-pointer duration-200"
             style={{
               width: `${item.itemW}px`,
               height: `${item.itemH}px`,
               transform: `translate(${item.offsetX}px, ${item.offsetY}px)`,
             }}>
             <Image
-              className="w-full"
+              className="w-full hover:scale-100"
               src={item.download_url}
               width={item.width}
               height={item.height}
