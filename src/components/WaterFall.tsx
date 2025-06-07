@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import LazyImage from './LazyImage'
 import type { WaterData } from '@/api/interface'
 
 export default function WaterFall({
@@ -85,12 +86,15 @@ export default function WaterFall({
               height: `${item.itemH}px`,
               transform: `translate(${item.offsetX}px, ${item.offsetY}px)`,
             }}>
-            <Image
-              className="w-full hover:scale-100"
+            <LazyImage
+              className="w-full h-full duration-200 hover:scale-150"
+              target={containerElm.current?.parentElement}
+              isLazy={true}
               src={item.download_url}
               width={item.width}
               height={item.height}
-              alt={item.name}></Image>
+              alt={item.name}
+            />
             <ul className="flex items-center justify-end gap-2 absolute top-0 left-0 w-full p-2">
               {actions?.map(({ type, icon }) => (
                 <li
