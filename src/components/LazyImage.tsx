@@ -88,7 +88,7 @@ export default function LazyImage({
   }, [])
 
   return (
-    <div ref={elm} className={`lazy-image relative bg-gray-50 ${className}`}>
+    <div ref={elm} className={`lazy-image relative bg-theme-gay ${className}`}>
       {!loading ? (
         <Image
           className="w-full h-full object-contain"

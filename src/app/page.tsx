@@ -79,13 +79,19 @@ export default function Home() {
   }, [user])
 
   return (
-    <Layout>
-      <WaterFall
-        data={images}
-        itemMaxW={200}
-        gap={10}
-        actions={actions}
-        dispatchAction={handleAction}></WaterFall>
-    </Layout>
+    <div className="index dark">
+      <Layout>
+        {images.length ? (
+          <WaterFall
+            data={images}
+            itemMaxW={200}
+            gap={10}
+            actions={actions}
+            dispatchAction={handleAction}></WaterFall>
+        ) : (
+          <div className="iconfont icon-kongshuju relative top-1/2 left-1/2 -translate-1/2 w-max text-8xl!"></div>
+        )}
+      </Layout>
+    </div>
   )
 }

@@ -19,10 +19,10 @@ export default function Header() {
   }
 
   return (
-    <header className="flex shrink-0 h-16 items-center border-b border-bcolor">
+    <header className="flex shrink-0 h-16 items-center border-b border-bcolor text-foreground bg-background">
       <h1 className="flex items-center w-64 pl-2.5 text-xl font-semibold shrink-0 cursor-pointer">
         <Image src="/favicon.ico" width={30} height={30} alt="logo"></Image>
-        <span className="ml-2">PICTURE BED</span>
+        <span className="ml-2 text-foreground">PICTURE BED</span>
       </h1>
       <ul className="flex-1 flex gap-2">
         {path.map((item, index) => (

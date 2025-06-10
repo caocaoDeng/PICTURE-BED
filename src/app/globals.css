@@ -3,21 +3,30 @@
 @import "../common/custom.scss";
 
 :root {
-  --mask: rgba(0, 0, 0, 0.3);
   --background: #ffffff;
   --foreground: #171717;
+  --color-gray: #f8f8f8;
+  --border-color: rgb(0 0 0 / 6%);
   --activeground: #0f5bff;
-  --border-color: #030712;
+  --mask: rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
   --color-mask: var(--mask);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-theme-gay: var(--color-gray);
   --color-activeground: var(--activeground);
-  --color-bcolor: --alpha(var(--border-color) / 10%);
+  --color-bcolor: var(--border-color);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+.dark {
+  --background: #1b1b1b;
+  --foreground: #ededed;
+  --color-gray: #4e4e4e;
+  --border-color: rgb(255 255 255 / 12%);
 }
 
 @media (prefers-color-scheme: dark) {
