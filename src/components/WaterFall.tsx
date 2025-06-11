@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useAppSelector } from '@/store/hook'
 import Image from 'next/image'
 import LazyImage from './LazyImage'
 import type { WaterData } from '@/api/interface'
@@ -16,6 +17,8 @@ export default function WaterFall({
   actions?: readonly any[]
   dispatchAction?: (type: any, item: WaterData) => void
 }) {
+  const { isAction, checked } = useAppSelector(state => state.common)
+
   const containerElm = useRef<HTMLDivElement>(null)
   const [itemW, setItemW] = useState<number>(0)
   const [col, setCol] = useState<number[]>([])
@@ -96,14 +99,27 @@ export default function WaterFall({
               alt={item.name}
             />
             <ul className="flex items-center justify-end gap-2 absolute top-0 left-0 w-full p-2">
-              {actions?.map(({ type, icon }) => (
-                <li
-                  key={type}
-                  className={`iconfont ${icon} cursor-pointer px-1 rounded bg-mask hover:text-white`}
-                  onClick={() =>
-                    dispatchAction && dispatchAction(type, item)
-                  }></li>
-              ))}
+              {isAction ? (
+                <li>
+                  <input
+                    type="checkbox"
+                    defaultValue={item.sha}
+                    defaultChecked={checked.includes(item.sha)}
+                    onChange={() =>
+                      dispatchAction && dispatchAction('checked', item)
+                    }
+                  />
+                </li>
+              ) : (
+                actions?.map(({ type, icon }) => (
+                  <li
+                    key={type}
+                    className={`iconfont ${icon} cursor-pointer px-1 rounded bg-mask hover:text-white`}
+                    onClick={() =>
+                      dispatchAction && dispatchAction(type, item)
+                    }></li>
+                ))
+              )}
             </ul>
           </div>
         )

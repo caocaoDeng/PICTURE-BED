@@ -23,9 +23,9 @@
 }
 
 .dark {
-  --background: #1b1b1b;
+  --background: #0a0a0a;
   --foreground: #ededed;
-  --color-gray: #4e4e4e;
+  --color-gray: #4a4a4a;
   --border-color: rgb(255 255 255 / 12%);
 }
 

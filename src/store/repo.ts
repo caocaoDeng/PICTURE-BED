@@ -103,7 +103,7 @@ export const updateContent = ({
     const { user, repo } = getState()
     const { login, name, email } = user.user as User
     const path = repo.path.join('/').replace(/Root\/?/, '')
-    const res = await api.updateContentByPath({
+    return await api.updateContentByPath({
       owner: login,
       repo: repo.name,
       path: path ? `${path}/${fileName}` : fileName,
@@ -111,7 +111,22 @@ export const updateContent = ({
       committer: { name, email },
       content,
     })
-    return res
+  }
+}
+
+export const deleteContent = (contentPath: string, sha: string) => {
+  return async (_: AppDispatch, getState: () => RootState) => {
+    const { user, repo } = getState()
+    const { login, name, email } = user.user as User
+    const path = repo.path.join('/').replace(/Root\/?/, '')
+    return await api.updateContentByPath({
+      owner: login,
+      repo: repo.name,
+      path: path ? `${path}/${contentPath}` : contentPath,
+      message: '',
+      committer: { name, email },
+      sha,
+    })
   }
 }
 

@@ -56,6 +56,18 @@ const api = {
       },
     })
   },
+
+  // 删除内容
+  deleteContentByPath(params: UpdateRepoParams) {
+    const { owner, repo, path } = params
+    return octokit.request<UpdateRepoParams, any>({
+      method: 'DELETE',
+      url: `/repos/${owner}/${repo}/contents/${path}`,
+      params: {
+        ...params,
+      },
+    })
+  },
 }
 
 export default api

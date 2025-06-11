@@ -12,6 +12,7 @@ import { RepoContent } from '@/api/interface'
 export default function Sider() {
   const dispatch = useAppDispatch()
   const { path, content } = useAppSelector(state => state.repo)
+  const { isAction, checked } = useAppSelector(state => state.common)
 
   const categoryElm = useRef<ModalEmit>(null)
   const uploadModalElm = useRef<ModalEmit>(null)
@@ -48,21 +49,33 @@ export default function Sider() {
 
       <ul className="flex-1 px-2.5 overflow-auto">
         {dirs.length ? (
-          dirs.map(({ name, path }, index) => (
+          dirs.map(({ name, path, sha }, index) => (
             <li
               key={index}
               onClick={() => handleClick(path, index)}
-              className={`flex items-center gap-3 p-2 mb-1 cursor-pointer rounded transition-all hover:bg-activeground hover:text-white ${
+              className={`group flex items-center gap-3 p-2 mb-1 cursor-pointer rounded transition-all hover:bg-activeground hover:text-white ${
                 pathIndex === index ? 'bg-activeground text-white' : ''
               }`}>
-              <span className="iconfont icon-24gf-folder"></span>
+              {isAction ? (
+                <input
+                  type="checkbox"
+                  defaultValue={sha}
+                  defaultChecked={checked.includes(sha)}
+                />
+              ) : (
+                <span className="iconfont icon-24gf-folder"></span>
+              )}
               <span className="flex-1 truncate">{name}</span>
-              <div
-                className={`iconfont icon-loading1 ${
-                  pathIndex === index
-                    ? 'flex items-center w-4 h-4 animate-spin'
-                    : 'hidden'
-                }`}></div>
+              {pathIndex ? (
+                <div
+                  className={`iconfont icon-loading1 ${
+                    pathIndex === index
+                      ? 'flex items-center w-4 h-4 animate-spin'
+                      : 'hidden'
+                  }`}></div>
+              ) : (
+                <div className="iconfont hidden group-hover:block"></div>
+              )}
             </li>
           ))
         ) : (

@@ -34,3 +34,8 @@ export interface RepoContentAction {
   type: ActionType.JOIN | ActionType.REPLACE
   content: RepoContent | RepoContent[]
 }
+
+export interface CommonState {
+  isAction: boolean
+  checked: string[]
+}
