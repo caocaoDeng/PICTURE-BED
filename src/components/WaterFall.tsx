@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppSelector } from '@/store/hook'
 import Image from 'next/image'
+import Tooptic from './Tooptic'
 import LazyImage from './LazyImage'
 import type { WaterData } from '@/api/interface'
 
@@ -81,47 +82,49 @@ export default function WaterFall({
       style={{ height: `${Math.max(...col)}px` }}>
       {waterfallData.map(item => {
         return (
-          <div
-            key={item.sha}
-            className="overflow-hidden absolute top-0 left-0 border-1 border-bcolor rounded-lg cursor-pointer duration-200"
-            style={{
-              width: `${item.itemW}px`,
-              height: `${item.itemH}px`,
-              transform: `translate(${item.offsetX}px, ${item.offsetY}px)`,
-            }}>
-            <LazyImage
-              className="w-full h-full duration-200 hover:scale-150"
-              target={containerElm.current?.parentElement}
-              isLazy={true}
-              src={item.download_url}
-              width={item.width}
-              height={item.height}
-              alt={item.name}
-            />
-            <ul className="flex items-center justify-end gap-2 absolute top-0 left-0 w-full p-2">
-              {isAction ? (
-                <li>
-                  <input
-                    type="checkbox"
-                    defaultValue={item.sha}
-                    defaultChecked={checked.includes(item.sha)}
-                    onChange={() =>
-                      dispatchAction && dispatchAction('checked', item)
-                    }
-                  />
-                </li>
-              ) : (
-                actions?.map(({ type, icon }) => (
-                  <li
-                    key={type}
-                    className={`iconfont ${icon} cursor-pointer px-1 rounded bg-mask hover:text-white`}
-                    onClick={() =>
-                      dispatchAction && dispatchAction(type, item)
-                    }></li>
-                ))
-              )}
-            </ul>
-          </div>
+          <Tooptic key={item.sha} info={item}>
+            <div
+              key={item.sha}
+              className="overflow-hidden absolute top-0 left-0 border-1 border-bcolor rounded-lg cursor-pointer duration-200"
+              style={{
+                width: `${item.itemW}px`,
+                height: `${item.itemH}px`,
+                transform: `translate(${item.offsetX}px, ${item.offsetY}px)`,
+              }}>
+              <LazyImage
+                className="w-full h-full duration-200 hover:scale-150"
+                target={containerElm.current?.parentElement}
+                isLazy={true}
+                src={item.download_url}
+                width={item.width}
+                height={item.height}
+                alt={item.name}
+              />
+              <ul className="flex items-center justify-end gap-2 absolute top-0 left-0 w-full p-2">
+                {isAction ? (
+                  <li>
+                    <input
+                      type="checkbox"
+                      defaultValue={item.sha}
+                      defaultChecked={checked.includes(item.sha)}
+                      onChange={() =>
+                        dispatchAction && dispatchAction('checked', item)
+                      }
+                    />
+                  </li>
+                ) : (
+                  actions?.map(({ type, icon }) => (
+                    <li
+                      key={type}
+                      className={`iconfont ${icon} cursor-pointer px-1 rounded bg-mask hover:text-white`}
+                      onClick={() =>
+                        dispatchAction && dispatchAction(type, item)
+                      }></li>
+                  ))
+                )}
+              </ul>
+            </div>
+          </Tooptic>
         )
       })}
     </div>
