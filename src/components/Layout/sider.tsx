@@ -58,6 +58,7 @@ export default function Sider() {
               }`}>
               {isAction ? (
                 <input
+                  className="w-max"
                   type="checkbox"
                   defaultValue={sha}
                   defaultChecked={checked.includes(sha)}

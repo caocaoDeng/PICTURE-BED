@@ -36,6 +36,7 @@ export interface RepoContentAction {
 }
 
 export interface CommonState {
+  theme: 'light' | 'dark'
   isAction: boolean
   checked: string[]
 }

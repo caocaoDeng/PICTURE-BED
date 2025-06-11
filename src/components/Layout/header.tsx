@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { useAppSelector, useAppDispatch } from '@/store/hook'
 import { fetchRepoContent, setRepoPath, setRepoContent } from '@/store/repo'
+import { setTheme } from '@/store/common'
 import { ActionType } from '@/store/interface'
+import Switch from '../Switch'
 
 export default function Header() {
   const dispatch = useAppDispatch()
 
   const { user } = useAppSelector(store => store.user)
   const { path } = useAppSelector(store => store.repo)
+  const { theme } = useAppSelector(state => state.common)
 
   const handleEntryPath = async (index: number) => {
     if (index === path.length - 1) return
@@ -37,6 +40,9 @@ export default function Header() {
         ))}
       </ul>
       <div className="flex flex-nowrap items-center gap-2 pr-2.5">
+        <Switch
+          checked={theme === 'dark'}
+          onChange={() => dispatch(setTheme())}></Switch>
         <div className="flex items-center gap-2">
           <Image
             className="rounded-full"

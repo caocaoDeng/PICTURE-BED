@@ -30,7 +30,7 @@ export type Action = (typeof actions)[number]['type']
 export default function Home() {
   const dispatch = useAppDispatch()
 
-  const { user, repo } = useAppSelector(state => state)
+  const { user, repo, common } = useAppSelector(state => state)
   const [images, setImages] = useState<WaterData[]>([])
 
   const handleAction = async (type: Action, item: WaterData) => {
@@ -79,7 +79,7 @@ export default function Home() {
   }, [user])
 
   return (
-    <div className="index dark">
+    <div className={`${common.theme}`}>
       <Layout>
         {images.length ? (
           <WaterFall
