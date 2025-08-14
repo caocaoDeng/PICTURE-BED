@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   // 静态导出
   output: 'export',
-  basePath: '/pictureManager',
+  basePath: '/PICTURE-BED',
   distDir: 'build',
   images: {
     unoptimized: true,
