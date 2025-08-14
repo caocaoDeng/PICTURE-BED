@@ -2,6 +2,10 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // 静态导出
+  output: 'export',
+  basePath: '/pictureManager',
+  distDir: 'build',
   images: {
     unoptimized: true,
     remotePatterns: [
