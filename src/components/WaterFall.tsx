@@ -69,7 +69,7 @@ export default function WaterFall({
     computedOffset()
   }
 
-  useEffect(computedOffset, [data])
+  useEffect(init, [data])
 
   useEffect(() => {
     init()
