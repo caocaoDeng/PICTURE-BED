@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useAppSelector } from '@/store/hook'
-import Tooptic from './Tooptic'
 import LazyImage from './LazyImage'
 import type { WaterData } from '@/api/interface'
 
@@ -17,16 +15,22 @@ export default function WaterFall({
   actions?: readonly any[]
   dispatchAction?: (type: any, item: WaterData) => void
 }) {
+  const config: {
+    width: number
+    columns: number[]
+  } = {
+    width: 0,
+    columns: [],
+  }
+
   const containerElm = useRef<HTMLDivElement>(null)
-  const [itemW, setItemW] = useState<number>(0)
-  const [col, setCol] = useState<number[]>([])
   const [waterfallData, setWaterFallData] = useState<WaterData[]>([])
 
   /**
    * 列数，每一项宽度
    * @returns void
    */
-  const init = () => {
+  const getInfo = () => {
     const divInfo = containerElm.current?.getBoundingClientRect()
     if (!divInfo) return
     // 列数
@@ -34,38 +38,41 @@ export default function WaterFall({
     // gap 总宽度
     const gapW = (length - 1) * gap
     // 根据列重新计算每一项的宽度
-    const divW = (divInfo.width - gapW) / length
-    const colums = Array.from({ length }, () => 0)
-    setItemW(divW)
-    setCol(colums)
+    const width = (divInfo.width - gapW) / length
+    config.width = width
+    config.columns = Array.from({ length }, () => 0)
   }
 
   const computedOffset = () => {
-    setCol(h => h.fill(0))
+    config.columns.fill(0)
     setWaterFallData([])
     data.forEach(item => {
+      const { width, columns } = config
       // 获取列高度最小的下标
-      const minIndex = col.indexOf(Math.min(...col))
+      const minIndex = columns.indexOf(Math.min(...columns))
       // x偏移量
-      const offsetX = (itemW + gap) * minIndex
+      const offsetX = (width + gap) * minIndex
       // y偏移量
-      const offsetY = col[minIndex]
+      const offsetY = columns[minIndex]
       // 渲染的高度
-      const itemH = (itemW * item.height) / item.width
-      col[minIndex] += itemH + gap
-      setCol([...col])
+      const itemH = (width * item.height) / item.width
+      columns[minIndex] += itemH + gap
       setWaterFallData(preData => [
         ...preData,
-        { ...item, itemW, itemH, offsetX, offsetY },
+        { ...item, itemW: width, itemH, offsetX, offsetY },
       ])
     })
   }
 
-  useEffect(computedOffset, [data, itemW])
+  const init = () => {
+    getInfo()
+    computedOffset()
+  }
+
+  useEffect(computedOffset, [data])
 
   useEffect(() => {
     init()
-    computedOffset()
     window.addEventListener('resize', init)
     return () => {
       window.removeEventListener('resize', init)
@@ -76,7 +83,7 @@ export default function WaterFall({
     <div
       ref={containerElm}
       className="relative w-full"
-      style={{ height: `${Math.max(...col)}px` }}>
+      style={{ height: `${Math.max(...config.columns)}px` }}>
       {waterfallData.map(item => {
         return (
           <div
