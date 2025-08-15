@@ -56,16 +56,7 @@ export default function Sider() {
               className={`group flex items-center gap-3 p-2 mb-1 cursor-pointer rounded transition-all hover:bg-activeground hover:text-white ${
                 pathIndex === index ? 'bg-activeground text-white' : ''
               }`}>
-              {isAction ? (
-                <input
-                  className="w-max"
-                  type="checkbox"
-                  defaultValue={sha}
-                  defaultChecked={checked.includes(sha)}
-                />
-              ) : (
-                <span className="iconfont icon-24gf-folder"></span>
-              )}
+              <span className="iconfont icon-24gf-folder"></span>
               <span className="flex-1 truncate">{name}</span>
               {pathIndex ? (
                 <div
